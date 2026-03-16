@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager - Inventory</title>
+
+  <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>Manager Portal</h1>
+    <nav>
+      <a href="../index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="card">
+      <h2>Inventory Actions</h2>
+
+      <form class="grid-form" id="managerForm">
+        <div class="field">
+          <label for="actionType">Action</label>
+          <select id="actionType" name="actionType" required>
+            <option value="in">IN (Add Stock)</option>
+            <option value="adjust">ADJUST (Correction)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="product">Product</label>
+          <select id="product" name="product" required>
+            <option value="" selected disabled>Select a product</option>
+            <option value="termidor">Termidor</option>
+            <option value="talstar">Talstar</option>
+            <option value="advion">Advion Gel</option>
+            <option value="maxforce">Maxforce</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="qty">Quantity</label>
+          <input type="number" id="qty" name="qty" min="1" placeholder="e.g., 10" required>
+        </div>
+
+        <div class="field">
+          <label for="note">Note (optional)</label>
+          <input type="text" id="note" name="note" placeholder="e.g., Received shipment">
+        </div>
+
+        <button class="primary" type="submit">Save</button>
+      </form>
+
+      <p id="message" class="hint"></p>
+    </section>
+
+    <section class="card">
+      <h2>Current Inventory</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Unit</th>
+              <th>In Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Termidor</td>
+              <td>Bottle</td>
+              <td id="stock-termidor">0</td>
+            </tr>
+            <tr>
+              <td>Talstar</td>
+              <td>Bottle</td>
+              <td id="stock-talstar">0</td>
+            </tr>
+            <tr>
+              <td>Advion Gel</td>
+              <td>Tubes</td>
+              <td id="stock-advion">0</td>
+            </tr>
+            <tr>
+              <td>Maxforce</td>
+              <td>Tubes</td>
+              <td id="stock-maxforce">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Team History</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>User</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../scripts/manager.js"></script>
+</body>
+</html>

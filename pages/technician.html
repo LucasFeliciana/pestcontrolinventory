@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technician - Inventory</title>
+
+  <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>Technician Portal</h1>
+    <nav>
+      <a href="../index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="card">
+      <h2>Request Products</h2>
+
+      <form class="grid-form" id="requestForm">
+        <div class="field">
+          <label for="product">Product</label>
+          <select id="product" name="product" required>
+            <option value="" selected disabled>Select a product</option>
+            <option value="termidor">Termidor</option>
+            <option value="talstar">Talstar</option>
+            <option value="advion">Advion Gel</option>
+            <option value="maxforce">Maxforce</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="qty">Quantity</label>
+          <input type="number" id="qty" name="qty" min="1" placeholder="e.g., 2" required>
+        </div>
+
+        <button class="primary" type="submit">Add to History</button>
+      </form>
+
+     <p id="message" class="hint"></p>
+    </section>
+
+    <section class="card">
+      <h2>Available Inventory (example)</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Unit</th>
+              <th>In Stock</th>
+            </tr>
+          </thead>
+         <tbody>
+           <tr>
+           <td>Termidor</td>
+           <td>Bottle</td>
+            <td id="stock-termidor">12</td>
+               </tr>
+               <tr>
+              <td>Talstar</td>
+                <td>Bottle</td>
+               <td id="stock-talstar">8</td>
+               </tr>
+            <tr>
+               <td>Advion Gel</td>
+                <td>Tubes</td>
+              <td id="stock-advion">20</td>
+             </tr>
+              <tr>
+           <td>Maxforce</td>
+             <td>Tubes</td>
+            <td id="stock-maxforce">15</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>History (example)</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Technician</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr>
+              <td>2026-01-25</td>
+              <td>Termidor</td>
+              <td>2</td>
+              <td>Lucas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+<script src="../scripts/app.js"></script>
+
+</body>
+</html>
