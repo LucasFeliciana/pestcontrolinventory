@@ -3,62 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manager - Inventory</title>
-
-  <link rel="stylesheet" href="../styles/style.css">
+  <title>Pest Control Inventory - Manager</title>
+  <link rel="stylesheet" href="../styles/styles.css">
 </head>
 <body>
-
   <header class="topbar">
-    <h1>Manager Portal</h1>
-    <nav>
-      <a href="../index.html">Logout</a>
+    <h1>Manager Inventory Tools</h1>
+    <nav class="top-links">
+      <a href="index.html">Technician Page</a>
     </nav>
   </header>
 
   <main class="page">
     <section class="card">
-      <h2>Inventory Actions</h2>
-
-      <form class="grid-form" id="managerForm">
+      <h2>Add New Product</h2>
+      <form id="productForm" class="grid-form two-columns">
         <div class="field">
-          <label for="actionType">Action</label>
-          <select id="actionType" name="actionType" required>
-            <option value="in">IN (Add Stock)</option>
-            <option value="adjust">ADJUST (Correction)</option>
-          </select>
+          <label for="newProductName">Product Name</label>
+          <input id="newProductName" type="text" placeholder="e.g. Bifen IT" required>
         </div>
 
         <div class="field">
-          <label for="product">Product</label>
-          <select id="product" name="product" required>
-            <option value="" selected disabled>Select a product</option>
-            <option value="termidor">Termidor</option>
-            <option value="talstar">Talstar</option>
-            <option value="advion">Advion Gel</option>
-            <option value="maxforce">Maxforce</option>
-          </select>
+          <label for="newProductUnit">Unit</label>
+          <input id="newProductUnit" type="text" placeholder="e.g. Bottle" required>
         </div>
 
         <div class="field">
-          <label for="qty">Quantity</label>
-          <input type="number" id="qty" name="qty" min="1" placeholder="e.g., 10" required>
+          <label for="newProductStock">Starting Stock</label>
+          <input id="newProductStock" type="number" min="0" placeholder="e.g. 10" required>
         </div>
 
-        <div class="field">
-          <label for="note">Note (optional)</label>
-          <input type="text" id="note" name="note" placeholder="e.g., Received shipment">
-        </div>
-
-        <button class="primary" type="submit">Save</button>
+        <button type="submit" class="primary">Create Product</button>
       </form>
-
-      <p id="message" class="hint"></p>
+      <p id="productMessage" class="message" role="status" aria-live="polite"></p>
     </section>
 
     <section class="card">
-      <h2>Current Inventory</h2>
+      <h2>Manager Stock Actions</h2>
+      <form id="managerForm" class="grid-form two-columns">
+        <div class="field">
+          <label for="managerName">Manager Name</label>
+          <input id="managerName" type="text" value="Manager" required>
+        </div>
 
+        <div class="field">
+          <label for="managerProduct">Product</label>
+          <select id="managerProduct" required></select>
+        </div>
+
+        <div class="field">
+          <label for="actionType">Action</label>
+          <select id="actionType" required>
+            <option value="in">Add Stock (+)</option>
+            <option value="adjust">Adjust to Exact Value</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="managerQty">Quantity</label>
+          <input id="managerQty" type="number" min="0" placeholder="Add or exact value" required>
+        </div>
+
+        <div class="field span-2">
+          <label for="managerNote">Note</label>
+          <input id="managerNote" type="text" placeholder="e.g. Shipment received">
+        </div>
+
+        <button type="submit" class="primary">Save Action</button>
+      </form>
+      <p id="managerMessage" class="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Inventory List</h2>
       <div class="table-wrap">
         <table>
           <thead>
@@ -68,35 +85,13 @@
               <th>In Stock</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>Termidor</td>
-              <td>Bottle</td>
-              <td id="stock-termidor">0</td>
-            </tr>
-            <tr>
-              <td>Talstar</td>
-              <td>Bottle</td>
-              <td id="stock-talstar">0</td>
-            </tr>
-            <tr>
-              <td>Advion Gel</td>
-              <td>Tubes</td>
-              <td id="stock-advion">0</td>
-            </tr>
-            <tr>
-              <td>Maxforce</td>
-              <td>Tubes</td>
-              <td id="stock-maxforce">0</td>
-            </tr>
-          </tbody>
+          <tbody id="inventoryBody"></tbody>
         </table>
       </div>
     </section>
 
     <section class="card">
-      <h2>Team History</h2>
-
+      <h2>Transaction History</h2>
       <div class="table-wrap">
         <table>
           <thead>
@@ -107,6 +102,7 @@
               <th>Qty</th>
               <th>User</th>
               <th>Note</th>
+              <th>Balance</th>
             </tr>
           </thead>
           <tbody id="historyBody"></tbody>

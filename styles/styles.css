@@ -1,162 +1,119 @@
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-  background-color: #f2f4f7;
-  min-height: 100vh;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6fa;
+  color: #1f2a37;
 }
 
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.login-card {
-  background-color: #ffffff;
-  padding: 30px;
-  width: 100%;
-  max-width: 350px;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.login-card h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.login-card label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.login-card input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.login-card button {
-  width: 100%;
-  padding: 10px;
-  background-color: #0077cc;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.login-card button:hover {
-  background-color: #005fa3;
-}
-
-/* ==============================
-   SHARED LAYOUT (TECHNICIAN PAGE)
-   ============================== */
-
-/* Top bar */
-/* ===== Shared layout for internal pages ===== */
 .topbar {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto 20px auto;
-  padding: 14px 16px;
-  background-color: #ffffff;
+  max-width: 1100px;
+  margin: 18px auto;
+  padding: 16px;
+  background: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .topbar h1 {
-  font-size: 20px;
   margin: 0;
+  font-size: 1.3rem;
 }
 
-.topbar a {
+.top-links a {
   text-decoration: none;
-  color: #0077cc;
-  font-weight: bold;
+  color: #0a63c9;
+  font-weight: 700;
 }
 
 .page {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 16px 30px 16px;
-
+  max-width: 1100px;
+  margin: 0 auto 30px;
+  padding: 0 16px;
   display: grid;
-  gap: 18px;
+  gap: 16px;
 }
 
 .card {
-  background-color: #ffffff;
-  padding: 18px;
+  background: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .card h2 {
-  margin-bottom: 12px;
+  margin-top: 0;
 }
 
-/* Form layout */
+.subtle {
+  margin-top: -4px;
+  color: #5f6d7d;
+}
+
 .grid-form {
   display: grid;
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.two-columns {
   grid-template-columns: 1fr 1fr;
-  align-items: end;
 }
 
 .field label {
   display: block;
+  font-weight: 700;
   margin-bottom: 6px;
-  font-weight: bold;
 }
 
 .field input,
 .field select {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 9px;
+  border: 1px solid #cfd5dd;
   border-radius: 6px;
+  font-size: 0.95rem;
 }
 
 .primary {
-  width: 100%;
-  padding: 10px;
-  background-color: #0077cc;
-  color: white;
   border: none;
+  background: #0a63c9;
+  color: #fff;
+  padding: 10px 14px;
   border-radius: 6px;
-  font-size: 16px;
   cursor: pointer;
+  font-weight: 700;
 }
 
 .primary:hover {
-  background-color: #005fa3;
+  background: #084d9b;
 }
 
-.hint {
-  margin-top: 10px;
-  color: #666;
-  font-size: 14px;
+.span-2 {
+  grid-column: span 2;
 }
 
-/* Table */
+.message {
+  margin: 10px 0 0;
+  font-weight: 700;
+  min-height: 20px;
+}
+
+.message.error {
+  color: #b11d1d;
+}
+
+.message.success {
+  color: #0f7a32;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -166,13 +123,23 @@ table {
   border-collapse: collapse;
 }
 
-thead th {
+th,
+td {
+  border-bottom: 1px solid #e5e8ee;
   text-align: left;
-  border-bottom: 2px solid #e6e6e6;
   padding: 10px;
 }
 
-tbody td {
-  border-bottom: 1px solid #eee;
-  padding: 10px;
+th {
+  background: #f8f9fc;
+}
+
+@media (max-width: 800px) {
+  .two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .span-2 {
+    grid-column: auto;
+  }
 }

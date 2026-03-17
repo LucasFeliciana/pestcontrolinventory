@@ -1,127 +1,236 @@
-const STORAGE_KEY = "pci_inventory_v1";
-const MANAGER_NAME = "Manager";
+const STORAGE_KEY = "pci_inventory_v2";
 
-const form = document.querySelector("#managerForm");
-const message = document.querySelector("#message");
-const historyBody = document.querySelector("#historyBody");
+const productForm = document.getElementById("productForm");
+const managerForm = document.getElementById("managerForm");
+const managerProductSelect = document.getElementById("managerProduct");
+const inventoryBody = document.getElementById("inventoryBody");
+const historyBody = document.getElementById("historyBody");
+const productMessage = document.getElementById("productMessage");
+const managerMessage = document.getElementById("managerMessage");
+
+function createDefaultState() {
+  return {
+    inventory: [
+      { id: "termidor", name: "Termidor", unit: "Bottle", stock: 12 },
+      { id: "talstar", name: "Talstar", unit: "Bottle", stock: 8 },
+      { id: "advion-gel", name: "Advion Gel", unit: "Tube", stock: 20 },
+      { id: "maxforce", name: "Maxforce", unit: "Tube", stock: 15 }
+    ],
+    history: []
+  };
+}
 
 function loadState() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
+  if (!raw) {
+    const state = createDefaultState();
+    saveState(state);
+    return state;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed.inventory) || !Array.isArray(parsed.history)) {
+      return createDefaultState();
+    }
+    return parsed;
+  } catch (error) {
+    return createDefaultState();
+  }
 }
 
 function saveState(state) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function todayISO() {
-  const d = new Date();
-  return d.toISOString().split("T")[0];
+function today() {
+  return new Date().toISOString().split("T")[0];
 }
 
-function setMessage(text) {
-  message.textContent = text;
+function showMessage(element, text, type) {
+  element.textContent = text;
+  element.className = `message ${type}`;
+}
+
+function slugify(value) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function getProductById(state, id) {
+  return state.inventory.find((item) => item.id === id);
 }
 
 function renderInventory(state) {
-  for (const key of Object.keys(state.inventory)) {
-    const cell = document.querySelector(`#stock-${key}`);
-    if (cell) cell.textContent = String(state.inventory[key].stock);
-  }
+  inventoryBody.innerHTML = "";
+  state.inventory.forEach((item) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${item.name}</td>
+      <td>${item.unit}</td>
+      <td>${item.stock}</td>
+    `;
+    inventoryBody.appendChild(row);
+  });
 }
 
 function renderHistory(state) {
   historyBody.innerHTML = "";
 
-  const items = [...state.history].reverse();
-
-  for (const item of items) {
-    // item.type pode não existir se você ainda não salvou isso no app.js do técnico
-    const type = item.type ? item.type.toUpperCase() : "OUT";
-
-    const note = item.note ? item.note : "";
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${item.date}</td>
-      <td>${type}</td>
-      <td>${item.product}</td>
-      <td>${item.qty}</td>
-      <td>${item.tech}</td>
-      <td>${note}</td>
-    `;
-    historyBody.appendChild(tr);
+  if (state.history.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = '<td colspan="7">No transactions yet.</td>';
+    historyBody.appendChild(row);
+    return;
   }
+
+  [...state.history].reverse().forEach((entry) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${entry.date}</td>
+      <td>${entry.type.toUpperCase()}</td>
+      <td>${entry.productName}</td>
+      <td>${entry.qty}</td>
+      <td>${entry.user}</td>
+      <td>${entry.note || "-"}</td>
+      <td>${entry.balance}</td>
+    `;
+    historyBody.appendChild(row);
+  });
 }
 
-// Boot
-let state = loadState();
+function renderProductSelect(state) {
+  managerProductSelect.innerHTML = '<option value="">Select a product</option>';
+  state.inventory.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = `${item.name} (${item.stock} ${item.unit})`;
+    managerProductSelect.appendChild(option);
+  });
+}
 
-if (!state) {
-  setMessage("No data found yet. Go to Technician page and create the first record.");
-} else {
+function refreshUI() {
+  const state = loadState();
   renderInventory(state);
   renderHistory(state);
+  renderProductSelect(state);
 }
 
-// Handle IN / ADJUST
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
+function createProduct(event) {
+  event.preventDefault();
 
-  state = loadState();
-  if (!state) {
-    setMessage("No data found. Create data first on Technician page.");
+  const name = document.getElementById("newProductName").value.trim();
+  const unit = document.getElementById("newProductUnit").value.trim();
+  const stock = Number(document.getElementById("newProductStock").value);
+
+  if (!name || !unit) {
+    showMessage(productMessage, "Product name and unit are required.", "error");
     return;
   }
 
-  const actionType = document.querySelector("#actionType").value; // in | adjust
-  const productKey = document.querySelector("#product").value;
-  const qty = Number(document.querySelector("#qty").value);
-  const note = document.querySelector("#note").value.trim();
-
-  if (!productKey) {
-    setMessage("Please select a product.");
-    return;
-  }
-  if (!Number.isFinite(qty) || qty < 1) {
-    setMessage("Please enter a valid quantity.");
+  if (!Number.isInteger(stock) || stock < 0) {
+    showMessage(productMessage, "Starting stock must be 0 or more.", "error");
     return;
   }
 
-  const product = state.inventory[productKey];
+  const state = loadState();
+  const id = slugify(name);
+
+  if (!id) {
+    showMessage(productMessage, "Please enter a valid product name.", "error");
+    return;
+  }
+
+  const exists = state.inventory.some((item) => item.id === id || item.name.toLowerCase() === name.toLowerCase());
+  if (exists) {
+    showMessage(productMessage, "A product with this name already exists.", "error");
+    return;
+  }
+
+  const newItem = { id, name, unit, stock };
+  state.inventory.push(newItem);
+
+  state.history.push({
+    date: today(),
+    type: "create",
+    productId: id,
+    productName: name,
+    qty: stock,
+    user: "Manager",
+    note: "New product created",
+    balance: stock
+  });
+
+  saveState(state);
+  productForm.reset();
+  showMessage(productMessage, "Product created successfully.", "success");
+  refreshUI();
+}
+
+function saveManagerAction(event) {
+  event.preventDefault();
+
+  const managerName = document.getElementById("managerName").value.trim() || "Manager";
+  const productId = managerProductSelect.value;
+  const actionType = document.getElementById("actionType").value;
+  const qty = Number(document.getElementById("managerQty").value);
+  const note = document.getElementById("managerNote").value.trim();
+
+  if (!productId) {
+    showMessage(managerMessage, "Please select a product.", "error");
+    return;
+  }
+
+  if (!Number.isInteger(qty) || qty < 0) {
+    showMessage(managerMessage, "Quantity must be a whole number 0 or more.", "error");
+    return;
+  }
+
+  const state = loadState();
+  const product = getProductById(state, productId);
+
   if (!product) {
-    setMessage("Product not found.");
+    showMessage(managerMessage, "Product not found.", "error");
     return;
   }
 
   if (actionType === "in") {
+    if (qty === 0) {
+      showMessage(managerMessage, "Add stock must be greater than 0.", "error");
+      return;
+    }
+
     product.stock += qty;
     state.history.push({
-      date: todayISO(),
+      date: today(),
       type: "in",
-      product: product.name,
+      productId: product.id,
+      productName: product.name,
       qty,
-      tech: MANAGER_NAME,
-      note,
+      user: managerName,
+      note: note || "Stock added",
+      balance: product.stock
     });
   } else {
-    // adjust: por enquanto, vamos tratar como "setar" via +qty (correção positiva)
-    // Se quiser ajuste negativo também, a gente melhora já já.
-    product.stock += qty;
+    product.stock = qty;
     state.history.push({
-      date: todayISO(),
+      date: today(),
       type: "adjust",
-      product: product.name,
+      productId: product.id,
+      productName: product.name,
       qty,
-      tech: MANAGER_NAME,
-      note: note || "Adjustment",
+      user: managerName,
+      note: note || "Adjusted to exact value",
+      balance: product.stock
     });
   }
 
   saveState(state);
-  renderInventory(state);
-  renderHistory(state);
+  managerForm.reset();
+  document.getElementById("managerName").value = managerName;
+  showMessage(managerMessage, "Manager action saved.", "success");
+  refreshUI();
+}
 
-  setMessage("Saved ✅");
-  form.reset();
-});
+refreshUI();
+productForm.addEventListener("submit", createProduct);
+managerForm.addEventListener("submit", saveManagerAction);
