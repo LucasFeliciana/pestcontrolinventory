@@ -3,28 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pest Control Inventory</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles/styles.css">
+  <title>Pest Control Inventory - Technician</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header class="topbar">
+    <h1>Pest Control Inventory</h1>
+    <nav class="top-links">
+      <a href="manager.html">Manager Page</a>
+    </nav>
+  </header>
 
-  <div class="login-container">
-    <div class="login-card">
-      <h1>Inventory Login</h1>
+  <main class="page">
+    <section class="card">
+      <h2>Technician - Remove Stock</h2>
+      <p class="subtle">Use this form when a technician takes product from inventory.</p>
 
-<form action="pages/technician.html">
-  <label for="username">Username</label>
-  <input type="text" id="username" name="username" placeholder="Enter your username" required>
+      <form id="removeForm" class="grid-form">
+        <div class="field">
+          <label for="techName">Technician Name</label>
+          <input id="techName" type="text" placeholder="e.g. Lucas" required>
+        </div>
 
-  <label for="password">Password</label>
-  <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <div class="field">
+          <label for="product">Product</label>
+          <select id="product" required></select>
+        </div>
 
-  <button type="submit">Login</button>
-</form>
-    </div>
-  </div>
+        <div class="field">
+          <label for="qty">Quantity to Remove</label>
+          <input id="qty" type="number" min="1" placeholder="e.g. 2" required>
+        </div>
 
+        <button type="submit" class="primary">Remove from Stock</button>
+      </form>
+
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Inventory List</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Unit</th>
+              <th>In Stock</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Transaction History</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>User</th>
+              <th>Note</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
